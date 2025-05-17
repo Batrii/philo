@@ -6,7 +6,7 @@
 /*   By: bnafiai <bnafiai@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 15:18:27 by bnafiai           #+#    #+#             */
-/*   Updated: 2025/05/17 16:07:33 by bnafiai          ###   ########.fr       */
+/*   Updated: 2025/05/17 20:48:29 by bnafiai          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,25 +23,32 @@ static int	check_for_max(char *str)
 	}
 	return (0);
 }
+
 static int	check_args(char *str)
 {
 	int i = 0;
-	if (check_for_max(str) == 1)
-		return (1);
 	while (str[i])
 	{
-		if (str[i] == '+' && str[i] != '\0')
+		if (str [i] == '-' && str[i + 1] != '\0')
+		{
+			printf("Error: argument %s in negatif \n", str);
+			return (1);
+		}
+		if (str[i] == '+' && str[i + 1] != '\0')
 			i++;
 		if (str[i] < '0' || str[i] > '9')
 		{
-			printf("argument %s is not a number \n", str);
+			printf("Error: argument %s is not a number \n", str);
 			return (1);
 		}
 		i++;
 	}
+	if (check_for_max(str) == 1)
+		return (1);
 	return (0);
 }
-int main(int argc, char **argv)
+
+int	main(int argc, char **argv)
 {
 	if (argc == 5 || argc == 6)
 	{
