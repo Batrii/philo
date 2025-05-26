@@ -18,7 +18,7 @@ static int	check_for_max(char *str)
 	res = ft_atoi(str);
 	if (res > 2147483647)
 	{
-		printf ("the argument %s is more that int max\n", str);
+		printf ("the argument %s is more than int max\n", str);
 		return (1);
 	}
 	return (0);

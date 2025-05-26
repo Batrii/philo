@@ -6,7 +6,7 @@
 /*   By: bnafiai <bnafiai@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 15:18:35 by bnafiai           #+#    #+#             */
-/*   Updated: 2025/05/23 16:05:53 by bnafiai          ###   ########.fr       */
+/*   Updated: 2025/05/26 15:58:06 by bnafiai          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,4 +40,21 @@ long ft_atoi(char *s)
 		i++;
 	}
 	return (res * sign);
+}
+
+int ft_usleep(long millisec, t_data *data)
+{
+	long start_time = current_time();
+	while (current_time() - start_time < millisec)
+	{
+		pthread_mutex_lock(&data->death_mutex);
+		if (data->someone_died)
+		{
+			pthread_mutex_unlock(&data->death_mutex);
+			break;
+		}
+		pthread_mutex_unlock(&data->death_mutex);
+		usleep(500);
+	}
+	return (0);
 }
