@@ -6,7 +6,7 @@
 /*   By: bnafiai <bnafiai@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 15:18:31 by bnafiai           #+#    #+#             */
-/*   Updated: 2025/05/26 15:58:22 by bnafiai          ###   ########.fr       */
+/*   Updated: 2025/05/28 16:58:49 by bnafiai          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ typedef struct s_data
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	death_mutex;
 	pthread_mutex_t	print_mutex;
+	struct s_philo	*philo;
 }	t_data;
 
 typedef struct s_philo
@@ -43,7 +44,7 @@ typedef struct s_philo
 	pthread_mutex_t	mutex_meals;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
-	t_data	*data;
+	struct s_data	*data;
 }	t_philo;
 
 
