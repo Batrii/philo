@@ -1,4 +1,4 @@
-CC = cc
+CC = cc -g -fsanitize=thread
 FLAGS = -Wall -Wextra -Werror
 LIBS = -pthread
 SRCS = philo.c philo_helpers.c parsin.c

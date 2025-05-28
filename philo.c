@@ -6,7 +6,7 @@
 /*   By: bnafiai <bnafiai@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 15:18:27 by bnafiai           #+#    #+#             */
-/*   Updated: 2025/05/28 17:08:06 by bnafiai          ###   ########.fr       */
+/*   Updated: 2025/05/28 21:11:09 by bnafiai          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,26 +26,6 @@ int	safe_print(t_philo *philo, char *message)
 	pthread_mutex_unlock(&philo->data->print_mutex);
 	return (0);
 }
-// int simulation_should_stop(t_philo *philo)
-// {
-// 	long	last_meal_taken;
-
-// 	pthread_mutex_lock(&philo->mutex_meals);
-// 	last_meal_taken = current_time() - philo->last_meal;
-// 	pthread_mutex_unlock(&philo->mutex_meals);
-// 	if (last_meal_taken > philo->data->time_to_die || (philo->data->nb_must_eat != -1 && philo->meals_eaten > philo->data->nb_must_eat))
-// 	{
-// 		pthread_mutex_lock(&philo->data->death_mutex);
-// 		if (!philo->data->someone_died)
-// 		{
-// 			safe_print(philo, " is dead");
-// 			philo->data->someone_died = 1;
-// 		}
-// 		pthread_mutex_unlock(&philo->data->death_mutex);
-// 		return (1);
-// 	}
-// 	return (0);
-// }
 void	*monitor_routine(void *args)
 {
 	t_data *data = (t_data *)args;
@@ -90,20 +70,19 @@ void *philo_rotine(void *args)
 	pthread_mutex_unlock(&philo->mutex_meals);
 
 	if (philo->id % 2 == 0)
-		usleep(1000);
-
+		usleep(500 );
+	if (philo->id % 2 == 0)
+	{
+		number_one = philo->left_fork;
+		number_two = philo->right_fork;
+	}
+	else
+	{
+		number_one = philo->right_fork;
+		number_two = philo->left_fork;
+	}
 	while (1)
 	{
-		if (philo->id % 2 == 0)
-		{
-			number_one = philo->left_fork;
-			number_two = philo->right_fork;
-		}
-		else
-		{
-			number_one = philo->right_fork;
-			number_two = philo->left_fork;
-		}
 		pthread_mutex_lock(number_one);
 		if (safe_print(philo, "has taken a fork"))
 		{
@@ -126,8 +105,13 @@ void *philo_rotine(void *args)
 		pthread_mutex_lock(&philo->mutex_meals);
 		philo->last_meal = current_time();
 		philo->meals_eaten++;
+		if (philo->data->nb_must_eat != -1 && philo->data->nb_must_eat == philo->meals_eaten)
+		{
+			pthread_mutex_unlock(&philo->mutex_meals);
+			break ;
+		}
 		pthread_mutex_unlock(&philo->mutex_meals);
-		ft_usleep(philo->data->time_to_eat * 1000, philo->data);
+		ft_usleep(philo->data->time_to_eat, philo->data);
 
 		pthread_mutex_unlock(number_one);
 		pthread_mutex_unlock(number_two);
@@ -135,7 +119,7 @@ void *philo_rotine(void *args)
 		if (safe_print(philo, "is sleeping") == 1)
 			break;
 
-		ft_usleep(philo->data->time_to_sleep * 1000, philo->data);
+		ft_usleep(philo->data->time_to_sleep, philo->data);
 
 		if (safe_print(philo, "is thinking") == 1)
 			break;
