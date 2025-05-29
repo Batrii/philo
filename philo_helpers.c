@@ -6,7 +6,7 @@
 /*   By: bnafiai <bnafiai@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 15:18:35 by bnafiai           #+#    #+#             */
-/*   Updated: 2025/05/28 21:04:23 by bnafiai          ###   ########.fr       */
+/*   Updated: 2025/05/29 15:26:00 by bnafiai          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,5 +56,19 @@ int ft_usleep(long millisec, t_data *data)
 		pthread_mutex_unlock(&data->death_mutex);
 		usleep(500);
 	}
+	return (0);
+}
+int	safe_print(t_philo *philo, char *message)
+{
+	pthread_mutex_lock(&philo->data->death_mutex);
+	if (philo->data->someone_died == 1)
+	{
+		pthread_mutex_unlock(&philo->data->death_mutex);
+		return (1);
+	}
+	pthread_mutex_unlock(&philo->data->death_mutex);
+	pthread_mutex_lock(&philo->data->print_mutex);
+	printf("%ld %d %s\n", current_time() - philo->data->start_time, philo->id, message);
+	pthread_mutex_unlock(&philo->data->print_mutex);
 	return (0);
 }
