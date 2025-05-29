@@ -6,7 +6,7 @@
 /*   By: bnafiai <bnafiai@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 15:18:31 by bnafiai           #+#    #+#             */
-/*   Updated: 2025/05/29 15:27:08 by bnafiai          ###   ########.fr       */
+/*   Updated: 2025/05/29 15:49:57 by bnafiai          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,5 +52,9 @@ long	current_time(void);
 int		check_args(char *str);
 int		ft_usleep(long millisec, t_data *data);
 int		safe_print(t_philo *philo, char *message);
+int		initalize_data(t_data *data, char **argv);
+void	store_philo(t_philo *philo, t_data *data);
+void	*monitor_routine(void *args);
+void	*philo_rotine(void *args);
 #endif
 

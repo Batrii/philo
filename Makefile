@@ -1,7 +1,7 @@
 CC = cc
 FLAGS = -Wall -Wextra -Werror
 LIBS = -pthread
-SRCS = philo.c philo_helpers.c parsin.c
+SRCS = philo.c philo_helpers.c parsin.c main.c
 OBJS = $(SRCS:.c=.o)
 
 NAME = philo

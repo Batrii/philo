@@ -6,7 +6,7 @@
 /*   By: bnafiai <bnafiai@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 15:18:27 by bnafiai           #+#    #+#             */
-/*   Updated: 2025/05/29 15:27:58 by bnafiai          ###   ########.fr       */
+/*   Updated: 2025/05/29 16:19:15 by bnafiai          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ void *philo_rotine(void *args)
 	return (NULL);
 }
 
-static int	initalize_data(t_data *data, char **argv)
+int	initalize_data(t_data *data, char **argv)
 {
 	data->nb_philo = ft_atoi(argv[1]);
 	data->time_to_die = ft_atoi(argv[2]);
@@ -135,7 +135,7 @@ static int	initalize_data(t_data *data, char **argv)
 	return (0);
 }
 
-static void	store_philo(t_philo *philo, t_data *data)
+void	store_philo(t_philo *philo, t_data *data)
 {
 	int	i;
 
@@ -151,82 +151,4 @@ static void	store_philo(t_philo *philo, t_data *data)
 		philo[i].data = data;
 		i++;
 	}
-}
-
-int	main(int argc, char **argv)
-{
-	t_philo	*philo_data;
-	t_data	data;
-	pthread_t	monitor;
-	if (argc == 5 || argc == 6)
-	{
-		int i = 1;
-		while (i < argc)
-		{
-			if (check_args(argv[i]))
-				return (1);
-			i++;
-		}
-		if (initalize_data(&data, argv))
-			return (1);
-		data.forks = malloc((sizeof(pthread_mutex_t) * data.nb_philo));
-		if (!data.forks)
-			return (1);
-		philo_data = malloc(sizeof(t_philo) * data.nb_philo);
-		if (!philo_data)
-			return (1);
-		data.philo = philo_data;
-		data.someone_died = 0;
-		data.start_time = current_time();
-		if (data.nb_philo == 1)
-		{
-			printf("0 1 has taken a fork\n");
-			usleep(data.time_to_die * 1000);
-			printf("%ld 1 is dead\n", current_time() - data.start_time);
-			free(data.forks);
-			free(philo_data);
-			return (0);
-		}
-		pthread_mutex_init(&data.death_mutex, NULL);
-		pthread_mutex_init(&data.print_mutex, NULL);
-		i = 0;
-		while (i < data.nb_philo)
-		{
-			pthread_mutex_init(&data.forks[i], NULL);
-			i++;
-		}
-		store_philo(philo_data, &data);
-		i = 0;
-		while (i < data.nb_philo)
-		{
-			pthread_create(&philo_data[i].thread, NULL, philo_rotine, &philo_data[i]);
-			i++;
-		}
-		pthread_create(&monitor, NULL, monitor_routine, &data);
-		pthread_join(monitor, NULL);
-		i = 0;
-		while (i < data.nb_philo)
-		{
-			pthread_join(philo_data[i].thread, NULL);
-			i++;
-		}
-		i = 0;
-		while (i < data.nb_philo)
-		{
-			pthread_mutex_destroy(&data.forks[i]);
-			pthread_mutex_destroy(&philo_data[i].mutex_meals);
-			i++;
-		}
-		free(data.forks);
-		free(philo_data);
-		pthread_mutex_destroy(&data.death_mutex);
-		pthread_mutex_destroy(&data.print_mutex);
-		return (0);
-	}
-	else
-	{
-		printf("Error: too much or too few arguments \n");
-		return 1;
-	}
-	return 0;
 }
