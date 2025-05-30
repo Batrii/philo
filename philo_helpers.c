@@ -6,7 +6,7 @@
 /*   By: bnafiai <bnafiai@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 15:18:35 by bnafiai           #+#    #+#             */
-/*   Updated: 2025/05/29 15:26:00 by bnafiai          ###   ########.fr       */
+/*   Updated: 2025/05/30 02:41:11 by bnafiai          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int ft_usleep(long millisec, t_data *data)
 		if (data->someone_died)
 		{
 			pthread_mutex_unlock(&data->death_mutex);
-			break;
+			return (1);
 		}
 		pthread_mutex_unlock(&data->death_mutex);
 		usleep(500);
