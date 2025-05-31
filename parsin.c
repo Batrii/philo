@@ -14,7 +14,8 @@
 
 static int	check_for_max(char *str)
 {
-	long res;
+	long	res;
+
 	res = ft_atoi(str);
 	if (res > 2147483647)
 	{
@@ -26,7 +27,9 @@ static int	check_for_max(char *str)
 
 int	check_args(char *str)
 {
-	int i = 0;
+	int	i;
+
+	i = 0;
 	while (str[i])
 	{
 		if (str [i] == '-' && str[i + 1] != '\0')

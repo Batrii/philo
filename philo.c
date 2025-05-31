@@ -6,63 +6,12 @@
 /*   By: bnafiai <bnafiai@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 15:18:27 by bnafiai           #+#    #+#             */
-/*   Updated: 2025/05/30 02:43:19 by bnafiai          ###   ########.fr       */
+/*   Updated: 2025/05/31 16:07:26 by bnafiai          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	*monitor_routine(void *args)
-{
-	t_data *data = (t_data *)args;
-	int i;
-	int all_ate_enough;
-	int total_meals;
-
-	while (1)
-	{
-		i = 0;
-		all_ate_enough = 1;
-		total_meals = 0;
-		while (i < data->nb_philo)
-		{
-			t_philo *philo = &data->philo[i];
-			long time_of_last_meal;
-			pthread_mutex_lock(&philo->mutex_meals);
-			time_of_last_meal = current_time() - philo->last_meal;
-			total_meals += philo->meals_eaten;
-			if (data->nb_must_eat != -1 && philo->meals_eaten < data->nb_must_eat)
-				all_ate_enough = 0;
-			pthread_mutex_unlock(&philo->mutex_meals);
-			
-			if (time_of_last_meal > data->time_to_die)
-			{
-				pthread_mutex_lock(&data->death_mutex);
-				if (!data->someone_died)
-				{
-					printf("%ld %d died\n", current_time() - data->start_time, philo->id);
-					data->someone_died = 1;
-				}
-				pthread_mutex_unlock(&data->death_mutex);
-				return (NULL);
-			}
-			i++;
-		}
-		if (data->nb_must_eat != -1 && (all_ate_enough || total_meals >= (data->nb_philo * data->nb_must_eat)))
-		{
-			pthread_mutex_lock(&data->death_mutex);
-			if (!data->someone_died)
-			{
-				printf("%ld All philosophers have eaten enough times\n", current_time() - data->start_time);
-				data->someone_died = 1;
-			}
-			pthread_mutex_unlock(&data->death_mutex);
-			return (NULL);
-		}
-		usleep(1000);
-	}
-	return (NULL);
-}
 int left_right_lock(t_philo *philo, pthread_mutex_t *one, pthread_mutex_t *two)
 {
 	pthread_mutex_lock(one);
@@ -82,14 +31,9 @@ int left_right_lock(t_philo *philo, pthread_mutex_t *one, pthread_mutex_t *two)
 }
 void simulation(t_philo *philo, pthread_mutex_t *one, pthread_mutex_t *two)
 {
-	while (1)
+	pthread_mutex_lock(&philo->data->death_mutex);
+	while (!philo->data->someone_died)
 	{
-		pthread_mutex_lock(&philo->data->death_mutex);
-		if (philo->data->someone_died)
-		{
-			pthread_mutex_unlock(&philo->data->death_mutex);
-			return;
-		}
 		pthread_mutex_unlock(&philo->data->death_mutex);
 
 		if (left_right_lock(philo, one, two))
@@ -99,7 +43,7 @@ void simulation(t_philo *philo, pthread_mutex_t *one, pthread_mutex_t *two)
 		philo->last_meal = current_time();
 		philo->meals_eaten++;
 		pthread_mutex_unlock(&philo->mutex_meals);
-		
+
 		if (safe_print(philo, "is eating"))
 		{
 			pthread_mutex_unlock(one);
@@ -117,13 +61,17 @@ void simulation(t_philo *philo, pthread_mutex_t *one, pthread_mutex_t *two)
 
 		if (safe_print(philo, "is sleeping"))
 			return;
-		
+
 		if (ft_usleep(philo->data->time_to_sleep, philo->data))
 			return;
-			
+
 		if (safe_print(philo, "is thinking"))
 			return;
+		usleep(1000);
+		pthread_mutex_lock(&philo->data->death_mutex);
 	}
+	pthread_mutex_unlock(&philo->data->death_mutex);
+
 }
 void *philo_rotine(void *args)
 {
@@ -137,7 +85,7 @@ void *philo_rotine(void *args)
 	pthread_mutex_unlock(&philo->mutex_meals);
 
 	if (philo->id % 2)
-		usleep(15000); 
+		usleep(500);
 	if (philo->id % 2 == 0)
 	{
 		number_one = philo->left_fork;
