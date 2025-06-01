@@ -6,7 +6,7 @@
 /*   By: bnafiai <bnafiai@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 15:18:31 by bnafiai           #+#    #+#             */
-/*   Updated: 2025/05/29 15:49:57 by bnafiai          ###   ########.fr       */
+/*   Updated: 2025/06/01 15:31:10 by bnafiai          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,4 +57,3 @@ void	store_philo(t_philo *philo, t_data *data);
 void	*monitor_routine(void *args);
 void	*philo_rotine(void *args);
 #endif
-

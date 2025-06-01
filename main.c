@@ -6,7 +6,7 @@
 /*   By: bnafiai <bnafiai@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 15:47:10 by bnafiai           #+#    #+#             */
-/*   Updated: 2025/05/29 16:19:00 by bnafiai          ###   ########.fr       */
+/*   Updated: 2025/06/01 16:49:23 by bnafiai          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,20 @@ int	for_one(t_data *data)
 	return (0);
 }
 
+void	init_mutex(t_data *data)
+{
+	int	i;
+
+	pthread_mutex_init(&data->death_mutex, NULL);
+	pthread_mutex_init(&data->print_mutex, NULL);
+	i = 0;
+	while (i < data->nb_philo)
+	{
+		pthread_mutex_init(&data->forks[i], NULL);
+		i++;
+	}
+}
+
 int	main(int argc, char **argv)
 {
 	t_philo	*philo_data;
@@ -92,14 +106,7 @@ int	main(int argc, char **argv)
 	data.start_time = current_time();
 	if (for_one(&data))
 		return (0);
-	pthread_mutex_init(&data.death_mutex, NULL);
-	pthread_mutex_init(&data.print_mutex, NULL);
-	i = 0;
-	while (i < data.nb_philo)
-	{
-		pthread_mutex_init(&data.forks[i], NULL);
-		i++;
-	}
+	init_mutex(&data);
 	store_philo(philo_data, &data);
 	create_and_join(philo_data, &data);
 	clean_up(philo_data, data);

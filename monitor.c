@@ -6,7 +6,7 @@
 /*   By: bnafiai <bnafiai@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 15:36:25 by bnafiai           #+#    #+#             */
-/*   Updated: 2025/05/31 16:00:59 by bnafiai          ###   ########.fr       */
+/*   Updated: 2025/06/01 15:27:25 by bnafiai          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,9 @@ void	*check_for_death(t_data *data, int *all_ate_enough, int *total_meals)
 	long	time_of_last_meal;
 
 	i = 0;
-	philo = &data->philo[i];
 	while (i < data->nb_philo)
 	{
+		philo = &data->philo[i];
 		pthread_mutex_lock(&philo->mutex_meals);
 		time_of_last_meal = current_time() - philo->last_meal;
 		*total_meals += philo->meals_eaten;
@@ -53,6 +53,18 @@ void	*check_for_death(t_data *data, int *all_ate_enough, int *total_meals)
 	return (NULL);
 }
 
+void	check_eat_required(t_data *data)
+{
+	pthread_mutex_lock(&data->death_mutex);
+	if (!data->someone_died)
+	{
+		printf("%ld All philosophers have eaten enough times\n",
+			current_time() - data->start_time);
+		data->someone_died = 1;
+	}
+	pthread_mutex_unlock(&data->death_mutex);
+}
+
 void	*monitor_routine(void *args)
 {
 	t_data	*data;
@@ -64,17 +76,13 @@ void	*monitor_routine(void *args)
 	{
 		all_ate_enough = 1;
 		total_meals = 0;
-		check_for_death(data, &all_ate_enough, &total_meals);
+		if (check_for_death(data, &all_ate_enough, &total_meals) == NULL
+			&& data->someone_died)
+			return (NULL);
 		if (data->nb_must_eat != -1 && (all_ate_enough
 				|| total_meals >= (data->nb_philo * data->nb_must_eat)))
 		{
-			pthread_mutex_lock(&data->death_mutex);
-			if (!data->someone_died)
-			{
-				printf("%ld All philosophers have eaten enough times\n", current_time() - data->start_time);
-				data->someone_died = 1;
-			}
-			pthread_mutex_unlock(&data->death_mutex);
+			check_eat_required(data);
 			return (NULL);
 		}
 		usleep(1000);

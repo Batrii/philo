@@ -6,7 +6,7 @@
 /*   By: bnafiai <bnafiai@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 15:18:35 by bnafiai           #+#    #+#             */
-/*   Updated: 2025/05/30 02:41:11 by bnafiai          ###   ########.fr       */
+/*   Updated: 2025/06/01 15:30:25 by bnafiai          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,20 @@
 long	current_time(void)
 {
 	struct timeval	tv;
+
 	gettimeofday(&tv, NULL);
 	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
-long ft_atoi(char *s)
+long	ft_atoi(char *s)
 {
-	int i = 0;
-	long res = 0;
-	int sign = 1;
+	int		i;
+	long	res;
+	int		sign;
 
+	i = 0;
+	res = 0;
+	sign = 1;
 	while (s[i] == ' ' || (s[i] >= 9 && s[i] <= 13))
 		i++;
 	if (s[i] == '-')
@@ -42,9 +46,11 @@ long ft_atoi(char *s)
 	return (res * sign);
 }
 
-int ft_usleep(long millisec, t_data *data)
+int	ft_usleep(long millisec, t_data *data)
 {
-	long start_time = current_time();
+	long	start_time;
+
+	start_time = current_time();
 	while (current_time() - start_time < millisec)
 	{
 		pthread_mutex_lock(&data->death_mutex);
@@ -58,6 +64,7 @@ int ft_usleep(long millisec, t_data *data)
 	}
 	return (0);
 }
+
 int	safe_print(t_philo *philo, char *message)
 {
 	pthread_mutex_lock(&philo->data->death_mutex);
@@ -68,7 +75,8 @@ int	safe_print(t_philo *philo, char *message)
 	}
 	pthread_mutex_unlock(&philo->data->death_mutex);
 	pthread_mutex_lock(&philo->data->print_mutex);
-	printf("%ld %d %s\n", current_time() - philo->data->start_time, philo->id, message);
+	printf("%ld %d %s\n", current_time() - philo->data->start_time,
+		philo->id, message);
 	pthread_mutex_unlock(&philo->data->print_mutex);
 	return (0);
 }

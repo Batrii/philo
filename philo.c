@@ -6,13 +6,13 @@
 /*   By: bnafiai <bnafiai@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 15:18:27 by bnafiai           #+#    #+#             */
-/*   Updated: 2025/05/31 16:07:26 by bnafiai          ###   ########.fr       */
+/*   Updated: 2025/06/01 15:42:42 by bnafiai          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int left_right_lock(t_philo *philo, pthread_mutex_t *one, pthread_mutex_t *two)
+int	left_right_lock(t_philo *philo, pthread_mutex_t *one, pthread_mutex_t *two)
 {
 	pthread_mutex_lock(one);
 	if (safe_print(philo, "has taken a fork"))
@@ -35,7 +35,6 @@ void simulation(t_philo *philo, pthread_mutex_t *one, pthread_mutex_t *two)
 	while (!philo->data->someone_died)
 	{
 		pthread_mutex_unlock(&philo->data->death_mutex);
-
 		if (left_right_lock(philo, one, two))
 			return;
 
@@ -71,7 +70,6 @@ void simulation(t_philo *philo, pthread_mutex_t *one, pthread_mutex_t *two)
 		pthread_mutex_lock(&philo->data->death_mutex);
 	}
 	pthread_mutex_unlock(&philo->data->death_mutex);
-
 }
 void *philo_rotine(void *args)
 {
@@ -85,7 +83,7 @@ void *philo_rotine(void *args)
 	pthread_mutex_unlock(&philo->mutex_meals);
 
 	if (philo->id % 2)
-		usleep(500);
+		usleep(1000);
 	if (philo->id % 2 == 0)
 	{
 		number_one = philo->left_fork;
