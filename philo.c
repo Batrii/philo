@@ -6,72 +6,13 @@
 /*   By: bnafiai <bnafiai@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 15:18:27 by bnafiai           #+#    #+#             */
-/*   Updated: 2025/06/01 15:42:42 by bnafiai          ###   ########.fr       */
+/*   Updated: 2025/06/02 15:53:39 by bnafiai          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	left_right_lock(t_philo *philo, pthread_mutex_t *one, pthread_mutex_t *two)
-{
-	pthread_mutex_lock(one);
-	if (safe_print(philo, "has taken a fork"))
-	{
-		pthread_mutex_unlock(one);
-		return (1);
-	}
-	pthread_mutex_lock(two);
-	if (safe_print(philo, "has taken a fork"))
-	{
-		pthread_mutex_unlock(one);
-		pthread_mutex_unlock(two);
-		return (1);
-	}
-	return (0);
-}
-void simulation(t_philo *philo, pthread_mutex_t *one, pthread_mutex_t *two)
-{
-	pthread_mutex_lock(&philo->data->death_mutex);
-	while (!philo->data->someone_died)
-	{
-		pthread_mutex_unlock(&philo->data->death_mutex);
-		if (left_right_lock(philo, one, two))
-			return;
-
-		pthread_mutex_lock(&philo->mutex_meals);
-		philo->last_meal = current_time();
-		philo->meals_eaten++;
-		pthread_mutex_unlock(&philo->mutex_meals);
-
-		if (safe_print(philo, "is eating"))
-		{
-			pthread_mutex_unlock(one);
-			pthread_mutex_unlock(two);
-			return;
-		}
-		if (ft_usleep(philo->data->time_to_eat, philo->data))
-		{
-			pthread_mutex_unlock(one);
-			pthread_mutex_unlock(two);
-			return;
-		}
-		pthread_mutex_unlock(one);
-		pthread_mutex_unlock(two);
-
-		if (safe_print(philo, "is sleeping"))
-			return;
-
-		if (ft_usleep(philo->data->time_to_sleep, philo->data))
-			return;
-
-		if (safe_print(philo, "is thinking"))
-			return;
-		usleep(1000);
-		pthread_mutex_lock(&philo->data->death_mutex);
-	}
-	pthread_mutex_unlock(&philo->data->death_mutex);
-}
-void *philo_rotine(void *args)
+void	*philo_rotine(void *args)
 {
 	t_philo			*philo;
 	pthread_mutex_t	*number_one;
@@ -81,7 +22,6 @@ void *philo_rotine(void *args)
 	pthread_mutex_lock(&philo->mutex_meals);
 	philo->last_meal = current_time();
 	pthread_mutex_unlock(&philo->mutex_meals);
-
 	if (philo->id % 2)
 		usleep(1000);
 	if (philo->id % 2 == 0)
@@ -109,9 +49,9 @@ int	initalize_data(t_data *data, char **argv)
 	else
 		data->nb_must_eat = -1;
 	data->someone_died = 0;
-	if (data->nb_philo <= 0 || data->time_to_die <= 0 ||
-		data->time_to_eat <= 0 || data->time_to_sleep <= 0 ||
-		(argv[5] != NULL && data->nb_must_eat <= 0))
+	if (data->nb_philo <= 0 || data->time_to_die <= 0
+		|| data->time_to_eat <= 0 || data->time_to_sleep <= 0
+		|| (argv[5] != NULL && data->nb_must_eat <= 0))
 	{
 		printf("Error: Invalid argument values\n");
 		return (1);

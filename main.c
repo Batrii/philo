@@ -6,28 +6,11 @@
 /*   By: bnafiai <bnafiai@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 15:47:10 by bnafiai           #+#    #+#             */
-/*   Updated: 2025/06/01 16:49:23 by bnafiai          ###   ########.fr       */
+/*   Updated: 2025/06/02 16:11:39 by bnafiai          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-void	clean_up(t_philo *philo, t_data data)
-{
-	int	i;
-
-	i = 0;
-	while (i < data.nb_philo)
-	{
-		pthread_mutex_destroy(&data.forks[i]);
-		pthread_mutex_destroy(&philo[i].mutex_meals);
-		i++;
-	}
-	pthread_mutex_destroy(&data.death_mutex);
-	pthread_mutex_destroy(&data.print_mutex);
-	free(data.forks);
-	free(philo);
-}
 
 void	create_and_join(t_philo *philo, t_data *data)
 {
@@ -78,6 +61,20 @@ void	init_mutex(t_data *data)
 	}
 }
 
+int	begin(t_data *data, t_philo *philo)
+{
+	data->philo = philo;
+	data->someone_died = 0;
+	data->start_time = current_time();
+	if (for_one(data))
+		return (0);
+	init_mutex(data);
+	store_philo(philo, data);
+	create_and_join(philo, data);
+	clean_up(philo, data);
+	return (0);
+}
+
 int	main(int argc, char **argv)
 {
 	t_philo	*philo_data;
@@ -101,14 +98,5 @@ int	main(int argc, char **argv)
 	philo_data = malloc(sizeof(t_philo) * data.nb_philo);
 	if (!philo_data)
 		return (1);
-	data.philo = philo_data;
-	data.someone_died = 0;
-	data.start_time = current_time();
-	if (for_one(&data))
-		return (0);
-	init_mutex(&data);
-	store_philo(philo_data, &data);
-	create_and_join(philo_data, &data);
-	clean_up(philo_data, data);
-	return (0);
+	return (begin(&data, philo_data));
 }

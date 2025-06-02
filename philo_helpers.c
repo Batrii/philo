@@ -6,7 +6,7 @@
 /*   By: bnafiai <bnafiai@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 15:18:35 by bnafiai           #+#    #+#             */
-/*   Updated: 2025/06/01 15:30:25 by bnafiai          ###   ########.fr       */
+/*   Updated: 2025/06/02 16:10:56 by bnafiai          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,4 +79,21 @@ int	safe_print(t_philo *philo, char *message)
 		philo->id, message);
 	pthread_mutex_unlock(&philo->data->print_mutex);
 	return (0);
+}
+
+void	clean_up(t_philo *philo, t_data *data)
+{
+	int	i;
+
+	i = 0;
+	while (i < data->nb_philo)
+	{
+		pthread_mutex_destroy(&data->forks[i]);
+		pthread_mutex_destroy(&philo[i].mutex_meals);
+		i++;
+	}
+	pthread_mutex_destroy(&data->death_mutex);
+	pthread_mutex_destroy(&data->print_mutex);
+	free(data->forks);
+	free(philo);
 }

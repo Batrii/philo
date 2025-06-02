@@ -6,7 +6,7 @@
 /*   By: bnafiai <bnafiai@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 15:18:31 by bnafiai           #+#    #+#             */
-/*   Updated: 2025/06/01 15:31:10 by bnafiai          ###   ########.fr       */
+/*   Updated: 2025/06/02 16:11:10 by bnafiai          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,4 +56,6 @@ int		initalize_data(t_data *data, char **argv);
 void	store_philo(t_philo *philo, t_data *data);
 void	*monitor_routine(void *args);
 void	*philo_rotine(void *args);
+void	simulation(t_philo *philo, pthread_mutex_t *one, pthread_mutex_t *two);
+void	clean_up(t_philo *philo, t_data *data);
 #endif
