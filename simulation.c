@@ -6,7 +6,7 @@
 /*   By: bnafiai <bnafiai@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/02 15:47:34 by bnafiai           #+#    #+#             */
-/*   Updated: 2025/06/02 15:51:57 by bnafiai          ###   ########.fr       */
+/*   Updated: 2025/06/03 23:45:27 by bnafiai          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,12 @@ int	left_right_lock(t_philo *philo, pthread_mutex_t *one, pthread_mutex_t *two)
 	pthread_mutex_lock(one);
 	if (safe_print(philo, "has taken a fork"))
 	{
+		pthread_mutex_unlock(one);
+		return (1);
+	}
+	if (philo->data->nb_philo == 1)
+	{
+		ft_usleep(philo->data->time_to_die, philo->data);
 		pthread_mutex_unlock(one);
 		return (1);
 	}
