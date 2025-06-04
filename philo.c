@@ -6,7 +6,7 @@
 /*   By: bnafiai <bnafiai@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 15:18:27 by bnafiai           #+#    #+#             */
-/*   Updated: 2025/06/02 15:53:39 by bnafiai          ###   ########.fr       */
+/*   Updated: 2025/06/04 18:20:48 by bnafiai          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ int	initalize_data(t_data *data, char **argv)
 	else
 		data->nb_must_eat = -1;
 	data->someone_died = 0;
-	if (data->nb_philo <= 0 || data->time_to_die <= 0
+	if ((data->nb_philo <= 0 || data->nb_philo > 200) || data->time_to_die <= 0
 		|| data->time_to_eat <= 0 || data->time_to_sleep <= 0
 		|| (argv[5] != NULL && data->nb_must_eat <= 0))
 	{
